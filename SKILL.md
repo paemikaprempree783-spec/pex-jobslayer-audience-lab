@@ -1,165 +1,128 @@
 ---
 name: pex-jobslayer-audience-lab
-description: Pex JobSlayer outcome-first audience strategy and Meta campaign planning. Use when finding interests, building audience hypotheses, mapping customer situations, designing Campaign + Ad Set structures, preparing MaxxGPT connector calls, or planning targeting tests without guessing audience quality from interest names alone.
+description: Pex JobSlayer Situation-to-Cell Decision Engine for turning an offer and customer context into evidence-backed audience cells, Meta campaign blueprints, connector-ready targeting research, and measurable next decisions. Use for audience strategy, interest research, Campaign + Ad Set planning, and targeting test diagnosis.
 ---
 
-# Pex JobSlayer — Audience Lab
+# Pex JobSlayer — Situation-to-Cell Decision Engine
 
-## Mission
-Turn a product, offer, and customer situation into a small set of testable audience hypotheses and a valid campaign blueprint. The output is not a list of random interests: it is a decision system connecting **customer situation → message → audience signal → ad set → measurement → next move**.
+## What this skill optimizes
+The output is a **decision**, not a pile of interests. Build the shortest defensible path from:
 
-## Operating principles
+`business outcome → customer situation → audience signal → message cell → measurement → next decision`
 
-1. Start with the business outcome and buying situation, not an interest keyword.
-2. Separate `KNOWN` (provided or returned by a tool), `INFERRED` (reasonable hypothesis), `TO_VERIFY` (requires search or user confirmation), and `UNSAFE` (do not use).
-3. An interest name is a proxy, not proof of intent, purchasing power, or performance. Never call an audience “winning” without performance data.
-4. Keep audience hypotheses distinct. Do not stack every interest into one ad set and then claim learnings.
-5. Use the smallest useful campaign structure. Avoid creating multiple campaigns when one controlled test can answer the question.
-6. Do not infer or target sensitive personal attributes. Describe people through needs, contexts, behaviors, and supplied first-party data.
-7. Never invent IDs, sizes, paths, tool responses, custom audiences, or connector availability.
-8. Before any external create action, show the exact blueprint, payload-relevant defaults, and ask for explicit user confirmation.
-9. Treat budget floors, objective mappings, and connector schema as hard constraints; verify live tool schema before calling.
-10. Optimize for learning quality and qualified outcomes, not audience size alone.
+Preserve the user's practical outcome—discover relevant targeting and produce a valid Campaign + Ad Set plan—while refusing to treat an interest label as evidence of intent or performance.
 
-## Connector boundary
+## Four evidence states
+Use these states in every report:
 
-This skill is designed to work with the `maxxgpt-targeting-assistant` connector when it is enabled. Before using it:
+- `KNOWN`: supplied by the user or returned by a verified tool.
+- `INFERRED`: a reasoned hypothesis from the offer and situation.
+- `TO_CHECK`: requires connector lookup, user confirmation, or performance data.
+- `DO_NOT_USE`: unsupported, sensitive, fabricated, or policy-risky input.
 
-- Discover the available tools and read their current schemas; do not guess parameters.
-- Use `search_interest` for seed discovery and `suggest_interest` for expansion when those tools exist.
-- Preserve each returned interest's ID, name, size, path, source tool, and retrieval context.
-- Use `create_campaign` only after the user has approved the proposed blueprint and all schema constraints pass.
-- If the connector is unavailable, produce the audience hypotheses and a manual research brief; clearly state that IDs and sizes still need lookup.
+Never invent an interest ID, audience size, path, custom audience, connector response, or winning status.
 
-## Workflow: the Audience Lab loop
+## The Decision Engine
 
-### 1. Define the decision
-Capture:
+### A. Set the North Star
+Capture only inputs that can change the plan:
 
-- Business outcome: awareness, conversations, leads, or sales
-- Offer and price/commitment level
-- Geography, language, age constraints, placement, and schedule
-- Customer's triggering situation and desired outcome
-- Existing customer/lead data, exclusions, and prior performance if supplied
-- Daily budget and test duration
+- outcome: awareness, conversations, leads, or sales
+- offer, price/commitment, promise, and proof available
+- geography/language, age or placement constraints when legitimately supplied
+- trigger that makes the customer care now
+- existing customer/lead data, exclusions, and prior results
+- budget and observation window
 
-If missing, ask only for inputs that materially change the targeting or campaign blueprint. Use explicit assumptions for the rest.
+If inputs are missing, proceed with clearly labeled assumptions unless the missing choice would materially change the campaign.
 
-### 2. Map the customer situation
-Build three to five situation cards, not demographic stereotypes:
+### B. Draw the Situation Map
+Describe customer situations, not stereotypes. Create 2–5 cards with:
 
-| Situation | Trigger/problem | Desired progress | Objection | Message angle |
-|---|---|---|---|---|
-| | | | | |
+`trigger → current friction → desired progress → objection → message angle`
 
-Prioritize situations by urgency, fit with the offer, ability to recognize the problem, and evidence available.
+Score each card qualitatively on urgency, offer fit, recognizability, and evidence. Keep the top two or three; too many cells dilute learning.
 
-### 3. Create audience hypotheses
-For each priority situation, create one hypothesis with:
+### C. Form competing audience bets
+For each chosen situation, write one competing bet:
 
-- **Who/context:** observable need, behavior, role, or life/work context
-- **Why now:** trigger that creates relevance
-- **Signal family:** broad interest, adjacent interest, behavior, first-party/custom audience, or retargeting
-- **Expected mechanism:** why the signal may correlate with the situation
-- **Main risk:** too broad, too narrow, low intent, wrong stage, or policy sensitivity
-- **Message match:** the creative angle that must accompany it
-- **Evidence level:** known, inferred, or to verify
+> If we reach people associated with **[signal family]** in the context of **[situation]**, and show **[message angle]**, then **[qualified behavior]** should improve because **[mechanism]**.
 
-Do not create ten nearly identical ad sets. Start with the smallest set that isolates the meaningful hypotheses.
+Specify the signal family as one of: broad category, adjacent category, behavior, first-party/custom, or retargeting. State the main failure mode: broadness, low intent, ambiguity, overlap, wrong funnel stage, or policy risk.
 
-### 4. Research signals with the connector
-When available:
+### D. Build the Signal Ledger
+Research only after the bet exists.
 
-1. Search seed terms from the situation card with `search_interest`.
-2. Record returned fields exactly; never normalize an ID or size by hand.
-3. Use `suggest_interest` only to expand or find adjacent signals, not to inflate the list.
-4. Deduplicate by ID and flag ambiguous names.
-5. Rank candidates by situation fit, message fit, distinctiveness, evidence quality, and testability—not raw size.
-6. Present candidates in a decision table before campaign creation:
+1. Convert the situation into a few seed concepts.
+2. Use the enabled targeting connector through its current adapter instructions in `references/connector-adapter.md`.
+3. Keep returned records verbatim: ID, exact name, size, path, source, and retrieval context.
+4. Deduplicate by ID; flag names that are ambiguous or too close to another candidate.
+5. Rank candidates on situation fit, message fit, distinctiveness, evidence quality, and testability. Do not rank by size alone.
+6. Present selected and rejected candidates, including why each was rejected.
 
-`id | name | size | path | source_tool | situation fit | message fit | confidence | risk`
+If no connector is available, return a manual lookup queue with `TO_CHECK` fields; do not fake tool results.
 
-If tools return no result, say `ไม่พบจากการค้นครั้งนี้`; do not substitute a fabricated interest.
+### E. Assemble message cells
+A cell is the smallest unit that can teach something. Each cell contains:
 
-### 5. Assemble the test architecture
-Use a three-layer map:
+- one situation bet
+- one audience signal set
+- one message angle
+- one control or hold-constant rule
+- one primary metric and one guardrail
 
-- **Campaign layer:** one outcome and one learning agenda.
-- **Ad set layer:** one distinct audience hypothesis per ad set, with exclusions and consistent controls.
-- **Ad layer:** message/creative angle matched to the situation; vary the creative deliberately rather than changing targeting and creative at the same time.
+Keep audience and creative variables aligned. If the question is audience quality, hold the message as constant as practical. If the question is message fit, do not change the audience at the same time.
 
-Choose one to three ad sets only when each answers a different question. If budget is too small to support multiple cells, recommend fewer cells rather than spreading spend thinly.
+### F. Compile the campaign blueprint
+Use `templates/cell-card.md` for the pre-launch plan. Prefer one campaign with 1–3 distinct cells when one learning agenda is enough. Reduce cells when budget cannot support a meaningful read. Keep Campaign, Ad Set, and Ad responsibilities explicit:
 
-### 6. Validate the campaign blueprint
-Before proposing creation, check:
+- **Campaign:** outcome and learning agenda.
+- **Ad Set:** one situation/audience cell and its exclusions.
+- **Ad:** message and creative test.
 
-- Exactly one campaign per request unless the live connector explicitly supports otherwise.
-- Campaign name follows the live connector's required prefix rule.
-- Objective is one of the connector's accepted values.
-- Optimization goal is compatible with that objective.
-- Daily budget meets the connector floor; never use null.
-- Ad sets count is within the connector range.
-- Every ad set has interests, a custom audience, or both.
-- Every interest includes its actual `source_tool`.
-- Missing arrays become `[]`, missing strings become `""`, and no payload field is `null`.
-- No unsupported targeting or sensitive attribute is added.
+Before any create action, read and apply `references/connector-adapter.md`; the adapter contains the live payload guardrails and tool names, not the strategic reasoning.
 
-Use the current connector schema as the source of truth if it differs from these defaults.
+### G. Run the Launch Gate
+Show the user the exact material plan before any external create call:
 
-### 7. Get approval and execute
-Show:
+1. North Star and assumptions
+2. Situation Map
+3. Signal Ledger with provenance
+4. Selected cells and rejected candidates
+5. Campaign blueprint, budget, objective, and optimization
+6. Validation warnings and known unknowns
+7. What the first read can and cannot prove
 
-1. Decision summary and assumptions
-2. Situation cards
-3. Selected audience candidates and rejected candidates with reasons
-4. Campaign/ad set blueprint
-5. Budget and test window
-6. Exact material defaults that will be sent
-7. Risks and what the first read can/cannot prove
+Ask for explicit confirmation immediately before creating anything. If the user has not approved, stop at a connector-ready blueprint.
 
-Ask for explicit confirmation immediately before `create_campaign`. After execution, report the returned campaign ID/status exactly and provide the next measurement plan. Do not claim the campaign was created if the call failed or the connector was unavailable.
+### H. Update the bets after launch
+When results are supplied, first check delivery sufficiency and tracking. Then inspect:
 
-### 8. Read results and update beliefs
-When performance data is supplied, evaluate in order:
+1. qualified outcome rate and cost
+2. message-to-situation fit
+3. audience overlap or fragmentation
+4. downstream quality, not cheap clicks alone
 
-- Delivery and spend sufficiency
-- Qualified action rate and cost
-- Message-to-audience fit
-- Audience overlap or fragmentation
-- Lead/purchase quality, not just cheap clicks
+Use a stated rule: `keep`, `iterate message`, `merge cells`, `broaden`, `narrow`, or `stop`. Name the evidence threshold and window. Avoid causal claims when both audience and creative changed.
 
-Use a decision rule such as: keep, iterate message, narrow/expand signal, merge cells, or stop. State the evidence threshold and time window. Do not make causal claims if audience and creative changed simultaneously.
+## Response modes
 
-## Output modes
+- **Signal Sketch:** North Star, Situation Map, three competing bets, and research queue.
+- **Signal Ledger:** verified candidates, provenance, fit, rejection reasons, and risks.
+- **Cell Plan:** use `templates/cell-card.md`.
+- **Decision Map:** use `templates/decision-map.md`.
+- **Adapter Review:** validate a connector-ready payload without executing it.
+- **Learning Review:** interpret supplied results and choose the next move.
 
-- **Audience Sprint:** situation map, three hypotheses, research terms, and one recommended test.
-- **Research Board:** connector candidates with provenance, fit, confidence, and risk.
-- **Campaign Blueprint:** use `templates/campaign-blueprint.md`.
-- **Full Audience Lab Report:** use `templates/audience-lab-report.md`.
-- **Connector-ready review:** validate a payload without executing it.
-- **Post-test diagnosis:** update hypotheses from supplied metrics.
-
-## Default response order
-
-1. Decision and business outcome
-2. Assumptions and missing inputs
-3. Customer situation map
-4. Audience hypotheses
-5. Verified/researched signals with provenance
-6. Campaign and ad set blueprint
-7. Validation warnings
-8. Approval gate or next research step
-9. Measurement and read rule
-
-## Final quality gate
-
+## Quality gate
 Before responding or calling a connector:
 
-- Are all audience claims labeled as known, inferred, or to verify?
-- Does every interest have provenance and a real returned ID when tool-backed?
-- Is each ad set tied to a different situation or research question?
-- Does the creative/message match the audience hypothesis?
-- Are campaign constraints and null-handling validated?
-- Are sensitive attributes excluded?
-- Has the exact creation payload been shown and explicitly approved?
-- Is the next decision rule measurable?
+- Is the business decision explicit?
+- Are `KNOWN`, `INFERRED`, `TO_CHECK`, and `DO_NOT_USE` separated?
+- Does each cell answer a different question?
+- Does the message match the customer situation?
+- Does every tool-backed signal have exact provenance?
+- Are objective, optimization, budget, array, source, and null rules validated through the adapter?
+- Are sensitive attributes and unsupported claims excluded?
+- Has the exact plan been shown and approved before creation?
+- Is the next decision measurable?
